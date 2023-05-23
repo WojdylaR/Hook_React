@@ -1,13 +1,24 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
-function useIncrement ({start = 0}:any, {pas = 1}: any) {
-    const [count, setCount] = useState (start)
+export function useIncrement (start:number, step: number) {
+    const [count, setCount] = useState(start)
 
     const increment = function (){
-        setCount((c: any) => c  + pas)
+        setCount((c: any) => c  + step)
     }
-
-    return [count, increment]
+    return [count, increment] as const
 }
 
-export default useIncrement
+export function useAutoIncrement (start:number, step:number){
+    const [count, setCount] = useState(start)
+    useEffect (
+        function ()
+        {
+            const timer = window.setInterval(function () {setCount((c: any) => c  + step)}, 1000)
+            return function () {
+            clearInterval(timer)
+        }
+    }, [])
+
+    return count
+}
